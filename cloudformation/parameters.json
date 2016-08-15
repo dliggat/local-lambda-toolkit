@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterValue": "local-development",
+    "UsePreviousValue": false,
+    "ParameterKey": "ResourcePrefix"
+  },
+  {
+    "ParameterValue": "",
+    "UsePreviousValue": false,
+    "ParameterKey": "ScheduleExpression"
+  },
+  {
+    "ParameterValue": "300",
+    "UsePreviousValue": false,
+    "ParameterKey": "Timeout"
+  },
+  {
+    "ParameterValue": "256",
+    "UsePreviousValue": false,
+    "ParameterKey": "MemorySize"
+  }
+]
