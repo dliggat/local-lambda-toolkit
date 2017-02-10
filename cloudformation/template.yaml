@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: A 'lambda_function' stack for project 'local-lambda-development'; rendered on 2017-02-07 by fabricate.
+Description: A 'lambda_function' stack; rendered on 2017-02-07 by fabricate.
 
 Metadata:
   CommitHash: 0890c58c1cd63e727b510f86035ab86309a352f9

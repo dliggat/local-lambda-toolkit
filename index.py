@@ -1,5 +1,6 @@
 import logging
 import os
+import yaml
 
 from my_lambda_package.utility import Utility
 
@@ -9,8 +10,24 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+def _load_config(filename='config.yaml'):
+    """Loads the configuration file."""
+    with open(os.path.abspath(os.path.join(os.path.dirname(__file__), filename)), 'r') as f:
+        config = yaml.load(f)
+        logger.info('Loaded config: {0}'.format(config))
+    return config
+
+
 def handler(event, context):
     """Entry point for the Lambda function."""
+    config = _load_config()
+
+    # Used to differentiate local vs Lambda.
+    if bool(os.getenv('MOCK')):
+        logger.debug('$MOCK set; likely running in development')
+    else:
+        logger.debug('No $MOCK set; likely running in Lambda')
+
     logger.info('This is being invoked from AWS account: {0}'.format(
         Utility.aws_account_id()))
 

@@ -9,15 +9,22 @@ PIP         := pip install -r
 init:
 	$(PIP) requirements/dev.txt
 
-provision:
+create-stack:
 	aws cloudformation create-stack \
 	  --stack-name $(STACK_NAME) \
 	  --template-body file://cloudformation/template.yaml \
 	  --parameters file://cloudformation/parameters.json \
 	  --capabilities CAPABILITY_IAM
 
+update-stack:
+	aws cloudformation update-stack \
+	  --stack-name $(STACK_NAME) \
+	  --template-body file://cloudformation/template.yaml \
+	  --parameters file://cloudformation/parameters.json \
+	  --capabilities CAPABILITY_IAM
+
 invoke:
-	python index.py
+	MOCK=true python index.py
 
 test:
 	py.test -rsxX -q -s tests
@@ -31,6 +38,7 @@ build: test
 	mkdir -p $(BUILDS_DIR)
 	$(PIP) requirements/lambda.txt -t $(STAGING_DIR)
 	cp *.py $(STAGING_DIR)
+	cp *.yaml $(STAGING_DIR)
 	cp -R $(MODULE) $(STAGING_DIR)
 	$(eval $@FILE := deploy-$(shell date +%Y-%m-%d_%H-%M).zip)
 	cd $(STAGING_DIR); zip -r $($@FILE) ./*; mv *.zip ../$(BUILDS_DIR)
