@@ -23,10 +23,10 @@ def handler(event, context):
     config = _load_config()
 
     # Used to differentiate local vs Lambda.
-    if bool(os.getenv('MOCK')):
-        logger.debug('$MOCK set; likely running in development')
+    if bool(os.getenv('STUB')):
+        logger.debug('$STUB set; likely running in development')
     else:
-        logger.debug('No $MOCK set; likely running in Lambda')
+        logger.debug('No $STUB set; likely running in Lambda')
 
     logger.info('This is being invoked from AWS account: {0}'.format(
         Utility.aws_account_id()))
