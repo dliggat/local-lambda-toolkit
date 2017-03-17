@@ -40,7 +40,7 @@ A set of conventions for local AWS Lambda software development.
 Creates a CloudFormation stack with the Lambda function, an execution role, and an optional CloudWatch event to run on a recurring basis.
 
 ```
-make provision
+make create-stack
 ```
 
 

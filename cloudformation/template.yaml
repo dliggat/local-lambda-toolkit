@@ -1,15 +1,15 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: A 'lambda_function' stack; rendered on 2017-02-07 by fabricate.
+Description: A 'lambda_function' stack for project 'tam-demo-function'; rendered on 2017-03-16 by fabricate.
 
 Metadata:
-  CommitHash: 0890c58c1cd63e727b510f86035ab86309a352f9
-  CommitMessage: "Update README.md"
+  CommitHash: ff89eaa5595d27ba152a20876ac53cdee061acf5
+  CommitMessage: "Lambdaception  invoke lambda from lambda"
 
 Parameters:
   ResourcePrefix:
     Type: String
-    Description: A description to identify resources (e.g. "my-perf-test")
+    Description: A description to identify resources  (e.g. "my-perf-test")
     MinLength: 2
 
   ScheduleExpression:
@@ -43,10 +43,19 @@ Resources:
     Properties:
       Code:
         ZipFile:
-          "Fn::Join":
-            - "\n"
-            - - "def handler(event, context):"
-              - "    print('This is a no-op; will be overwritten later.')"
+          "Fn::Sub": |
+            import json
+            import logging
+
+            logging.basicConfig()
+            logger = logging.getLogger(__name__)
+            logger.setLevel(logging.INFO)
+
+            def handler(event, context):
+                logger.info('Event: ' + json.dumps(event))
+                logger.info('Context: ' + str(dir(context)))
+                return {'message': 'This is placeholder code! Replace me!'}
+
       Role: { "Fn::GetAtt": [ LambdaFunctionExecutionRole, Arn ] }
       Timeout: { Ref: Timeout }
       Handler: index.handler
@@ -140,10 +149,9 @@ Outputs:
     Value: { "Fn::GetAtt": [ LambdaFunctionExecutionRole, Arn ] }
   SigninUrl:
     Value:
-      "Fn::Join":
-        - ""
-        - - "https://signin.aws.amazon.com/switchrole?account="
-          - { Ref: "AWS::AccountId" }
-          - "&roleName="
-          - { Ref : LambdaFunctionExecutionRole }
-          - "&displayName=assumed-role"
+      "Fn::Sub": |
+        https://signin.aws.amazon.com/switchrole?account=${AWS::AccountId}&roleName=${LambdaFunctionExecutionRole}&displayName=assumed-role
+  TestCommand:
+    Value:
+      "Fn::Sub": |
+        aws lambda invoke --function-name ${LambdaFunction} /tmp/${LambdaFunction}-output.txt; cat /tmp/${LambdaFunction}-output.txt
