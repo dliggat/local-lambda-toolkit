@@ -30,6 +30,10 @@ Conditions:
 Resources:
   LambdaFunction:
     Type: AWS::Lambda::Function
+    Metadata:
+      Comment:
+        "Fn::Sub":
+          "Function for ${}"
     DependsOn: [ LambdaFunctionExecutionRole ]
     Properties:
       Code:
