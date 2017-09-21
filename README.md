@@ -41,13 +41,11 @@ A set of conventions for local AWS Lambda software development.
 
 Creates a CloudFormation stack with the Lambda function, an execution role, and an optional CloudWatch event to run on a recurring basis.
 
-Edit `cloudformation/template.yaml` and `cloudformation/parameters.json` to make any necessary adjustments.
-
 ### A) Stack Naming and Parameters
 
 Edit `cloudformation/parameters.json`, and supply appropriate parameters.
 
-In particular, Select appropriate values for `ProjectName` and `EnvironmentName` in `cloudformation/parameters.json`. *The resulting CloudFormation stack will be named `${ProjectName}-${EnvironmentName}-stack`, and a stack name of this form will be presumed for future CloudFormation operations.*
+In particular, Select appropriate values for `ProjectName` and `EnvironmentName` in `cloudformation/parameters.json`. **The resulting CloudFormation stack will be named `${ProjectName}-${EnvironmentName}-stack`, and a stack name of this form will be presumed for future CloudFormation operations.**
 
 ### B) Permissioning
 
@@ -84,10 +82,10 @@ Ensure that the `AllowParameterAccess` policy in `cloudformation/template.yaml` 
             - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/my-namespace.*"
             - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}.common.*"
 # ...
+```
 
 
 When these steps are complete:
-
 
 ```bash
 make create-stack
@@ -95,7 +93,7 @@ make create-stack
 
 ### Updates
 
-Then update the stack:
+Update the stack as required:
 
 ```bash
 make update-stack
@@ -174,7 +172,7 @@ make build
 
 ## 6. Deploy
 
-Sends the build to a Lambda ARN. Note that `$ARN` must be set, or this will result in an error.
+Sends the build to a Lambda ARN. Note that `$ARN` must be set, or this will result in an error. It can be easily retrieved via `make describe-stack`.
 
 ```bash
 ARN=arn:aws:lambda:us-west-2:111111111111:function:my-function-name make deploy
