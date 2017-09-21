@@ -1,42 +1,37 @@
 STAGING_DIR   := package
 BUILDS_DIR    := builds
 EXCLUDE_DIRS  := .git|tests|cloudformation|requirements|$(STAGING_DIR)|$(BUILDS_DIR)
-STACK_FILE    := .stack-name
 PIP_COMMAND   := pip install -r
 
-.PHONY: init set-stack create-stack update-stack invoke test clean build _check-vars deploy
+.PHONY: init create-stack update-stack invoke test clean build _check-arn _check-stack deploy
 
 
 init:
-
 	$(PIP_COMMAND) requirements/dev.txt
 
-_retrieve-stack-name:
-	# Get the value of the stack from .stack-name.txt so update-stack can use it
-	# $(eval $@STACK_NAME := $(shell head -n1 $(STACK_FILE)))
-	# @echo $($@STACK_NAME)
 
-_set-stack-name-file:
-	# If no .stack-name, ask the user to set it.
+_check-stack:  # Ensure that a stack name is set before we do any stack operations.
+ifndef STACK
+	$(error STACK is undefined; set to the CloudFormation stack name)
+endif
 
-
-create-stack: _set-stack-name-file
+create-stack: _check-stack
 	aws cloudformation create-stack \
-	  --stack-name $(STACK_NAME) \
+	  --stack-name $(STACK) \
 	  --template-body file://cloudformation/template.yaml \
 	  --parameters file://cloudformation/parameters.json \
 	  --capabilities CAPABILITY_IAM
 
-update-stack: _retrieve-stack-name
+update-stack: _check-stack
 	aws cloudformation update-stack \
-	  --stack-name $(STACK_NAME) \
+	  --stack-name $(STACK) \
 	  --template-body file://cloudformation/template.yaml \
 	  --parameters file://cloudformation/parameters.json \
 	  --capabilities CAPABILITY_IAM
 
-# delete-stack: _retrieve-stack-name
-# 	aws cloudformation delete-stack \
-# 	  --stack-name $(STACK_NAME) \
+delete-stack: _check-stack
+	aws cloudformation delete-stack \
+	  --stack-name $(STACK) \
 
 invoke:
 	STUB=true python index.py
@@ -47,7 +42,6 @@ test:
 clean:
 	rm -rf $(STAGING_DIR)
 	rm -rf $(BUILDS_DIR)
-
 
 build: test
 	find . -type f -ipath '*.pyc' -delete  # Get rid of unnecessary .pyc files.
@@ -64,12 +58,12 @@ build: test
 	@echo "Built $(BUILDS_DIR)/$($@FILE)"
 	rm -rf $(STAGING_DIR)
 
-_check-vars:  # Ensure that an ARN is set before we can deploy to it.
+_check-arn:  # Ensure that an ARN is set before we can deploy to it.
 ifndef ARN
-	$(error ARN is undefined)
+	$(error ARN is undefined; set to the appropriate Lambda ARN to deploy to)
 endif
 
-deploy: build _check-vars
+deploy: build _check-arn
 	$(eval $@FILE := $(shell ls -t $(BUILDS_DIR) | head -n1 ))
 	aws lambda update-function-code --function-name $(ARN) --zip-file "fileb://$(BUILDS_DIR)/$($@FILE)"
 	@echo "Deployed $(BUILDS_DIR)/$($@FILE) to $(ARN)"

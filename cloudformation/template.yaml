@@ -127,7 +127,7 @@ Resources:
         #         Action: "kms:Decrypt"
         #         Resource:
         #           - Fn::ImportValue:
-        #             "Fn::Sub": "arn-to-keys-to-authorize"
+        #             "Fn::Sub": "arn-to-key-to-authorize"
 
       # # Unused - uncomment to add an array of managed policies.
       # ManagedPolicyArns:
