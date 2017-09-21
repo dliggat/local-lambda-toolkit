@@ -33,7 +33,7 @@ Resources:
     Metadata:
       Comment:
         "Fn::Sub":
-          "Function for ${}"
+          "Function for ${ProjectName}-${EnvironmentName}"
     DependsOn: [ LambdaFunctionExecutionRole ]
     Properties:
       Code:
@@ -124,6 +124,9 @@ Resources:
     Type: AWS::Events::Rule
     Condition: HasSchedule
     Properties:
+      Description:
+        "Fn::Sub":
+          "Scheduled rule for ${ProjectName}-${EnvironmentName}"
       ScheduleExpression: { Ref : ScheduleExpression }
       State: ENABLED
       Targets:
