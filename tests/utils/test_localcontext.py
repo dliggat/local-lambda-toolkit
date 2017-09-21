@@ -1,15 +1,15 @@
 import mock
 import unittest
 
-from my_lambda_package.localcontext import LocalContext
+from utils.localcontext import LocalContext
 
 
 class TestLocalContext(unittest.TestCase):
 
-    @mock.patch('my_lambda_package.localcontext.Utility')
-    def testInvokedFunctionArn(self, mock_utility):
+    @mock.patch('utils.localcontext.Helpers')
+    def testInvokedFunctionArn(self, mock_helpers):
         """Tests the output of LocalContext.invoked_function_arn."""
-        mock_utility.aws_account_id.return_value = 123456654321
+        mock_helpers.aws_account_id.return_value = 123456654321
         obj = LocalContext()
         self.assertEqual(obj.invoked_function_arn,
             'arn:aws:lambda:us-east-1:123456654321:function:func-name')

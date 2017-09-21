@@ -2,7 +2,7 @@ import logging
 import os
 import yaml
 
-from my_lambda_package.utility import Utility
+from utils.helpers import Helpers
 
 
 logging.basicConfig()
@@ -29,9 +29,9 @@ def handler(event, context):
         logger.debug('No $STUB set; likely running in Lambda')
 
     logger.info('This is being invoked from AWS account: {0}'.format(
-        Utility.aws_account_id()))
+        Helpers.aws_account_id()))
 
 
 if __name__ == '__main__':
-    from my_lambda_package.localcontext import LocalContext
+    from utils.localcontext import LocalContext
     handler(None, LocalContext())

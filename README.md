@@ -19,20 +19,20 @@ A set of conventions for local AWS Lambda software development.
 │   └── parameters.json
 │   └── template.yaml
 ├── index.py                           # Entry point for the Lambda function.
-├── my_lambda_package                  # Python package `my_lambda_package`.
+├── utils                              # Python package `utils`.
 │   ├── __init__.py
 │   ├── localcontext.py
-│   ├── utility.py
+│   ├── helpers.py
 ├── requirements                       # External dependencies.
 │   ├── common.txt
 │   ├── dev.txt
 │   └── lambda.txt
 └── tests                              # Unit tests for the package.
     ├── __init__.py
-    └── my_lambda_package
+    └── utils
         ├── __init__.py
         ├── test_localcontext.py
-        └── test_utility.py
+        └── test_helpers.py
 ```
 
 ## 1. Initial AWS Setup
