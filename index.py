@@ -6,14 +6,28 @@ from utils.helpers import Helpers
 from utils.config import configuration
 
 
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+def setup_logging(request_id):
+    """Creates the logging formatter.
 
+    Args:
+        request_id: (str) The id of the execution context (i.e. the Lambda execution ID).
+    """
+    logger = logging.getLogger()
+    logger.info('Setting up logging')
+    console_handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        '[%(levelname)s] %(asctime)s {0} [%(module)s:%(lineno)d]: %(message)s'.format(request_id))
+    console_handler.setFormatter(formatter)
+
+    logger.handlers = []  # Get rid of any default handlers (Lambda apparently adds one).
+    logger.addHandler(console_handler)
+    logger.setLevel(logging.INFO)
+    return logger
 
 
 def handler(event, context):
     """Entry point for the Lambda function."""
+    logger = setup_logging(context.aws_request_id)
     config = configuration()
 
     # Used to differentiate local vs Lambda.

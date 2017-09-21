@@ -6,15 +6,12 @@ import yaml
 import boto3
 
 
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
 client = boto3.client('ssm')
 
 
 def configuration(filename='config.yaml'):
     """Load configuration from config file."""
+    logger = logging.getLogger(__name__)
 
     config = {}
     with open(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', filename)), 'r') as f:
