@@ -39,7 +39,7 @@ describe-stack:
 	  --stack-name $(STACK_NAME)
 
 invoke:
-	STUB=true python index.py
+	IS_LOCAL=true EnvironmentName=$(ENVIRONMENT_NAME) python index.py
 
 test:
 	py.test -rsxX -q -s tests
@@ -49,7 +49,6 @@ clean:
 	rm -rf $(BUILDS_DIR)
 
 build: test
-	find . -type f -ipath '*.pyc' -delete  # Get rid of unnecessary .pyc files.
 	mkdir -p $(STAGING_DIR)
 	mkdir -p $(BUILDS_DIR)
 	$(PIP_COMMAND) requirements/lambda.txt -t $(STAGING_DIR)
@@ -58,6 +57,7 @@ build: test
         # Copy all other directories, excluding the blacklist.
 	$(eval $@DEPLOY_DIRS := $(shell find . -type d -depth 1 | grep -v  -E '$(EXCLUDE_DIRS)'))
 	cp -R $($@DEPLOY_DIRS) $(STAGING_DIR)
+	find $(STAGING_DIR) -type f -ipath '*.pyc' -delete  # Get rid of unnecessary .pyc files.
 	$(eval $@FILE := deploy-$(shell date +%Y-%m-%d_%H-%M).zip)
 	cd $(STAGING_DIR); zip -r $($@FILE) ./*; mv *.zip ../$(BUILDS_DIR)
 	@echo "Built $(BUILDS_DIR)/$($@FILE)"

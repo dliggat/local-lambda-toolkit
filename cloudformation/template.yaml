@@ -64,6 +64,9 @@ Resources:
       Handler: index.handler
       Runtime: { Ref: Runtime }
       MemorySize: { Ref: MemorySize }
+      Environment:
+        Variables:
+          EnvironmentName: { Ref: EnvironmentName }
 
 
   LambdaFunctionExecutionRole:

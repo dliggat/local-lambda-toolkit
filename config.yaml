@@ -11,11 +11,15 @@ other_config:
   - for
   - instance
 
+env:
+  $EnvironmentName
+
+
 # Dynamic config - keys with a `parameterstore` prefix will be looked up
 # in SSM ParameterStore, and transparently decrypted (if this is both
 # necessary, and available to the executing role via KMS permissioning).
 
 # parameterstore_foo: key.goes.here
 # parameterstore_bar: other.key.goes.here
-# parameterstore_baz: this.one.has.an.$ENV
+# parameterstore_baz: this.one.has.an.$EnvironmentName
 

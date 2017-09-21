@@ -6,11 +6,12 @@ from utils.helpers import Helpers
 from utils.config import configuration
 
 
-def setup_logging(request_id):
+def setup_logging(request_id, level=logging.INFO):
     """Creates the logging formatter.
 
     Args:
         request_id: (str) The id of the execution context (i.e. the Lambda execution ID).
+        level: logging level to use.
     """
     logger = logging.getLogger()
     logger.info('Setting up logging')
@@ -21,7 +22,7 @@ def setup_logging(request_id):
 
     logger.handlers = []  # Get rid of any default handlers (Lambda apparently adds one).
     logger.addHandler(console_handler)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(level)
     return logger
 
 
@@ -31,13 +32,15 @@ def handler(event, context):
     config = configuration()
 
     # Used to differentiate local vs Lambda.
-    if bool(os.getenv('STUB')):
-        logger.debug('$STUB set; likely running in development')
+    if bool(os.getenv('IS_LOCAL')):
+        logger.debug('$IS_LOCAL set; likely running in development')
     else:
-        logger.debug('No $STUB set; likely running in Lambda')
+        logger.debug('No $IS_LOCAL set; likely running in Lambda')
 
     logger.info('This is being invoked from AWS account: {0}'.format(
         Helpers.aws_account_id()))
+
+    return {'Success': True}
 
 
 if __name__ == '__main__':

@@ -16,7 +16,7 @@ def configuration(filename='config.yaml'):
     config = {}
     with open(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', filename)), 'r') as f:
         config = yaml.load(f)
-        logger.info('Loaded config: {0}'.format(config))
+        logger.info('Loaded raw config: {0}'.format(config))
 
     new_config = {}
     logger.info('Inspecting configuration to see if any ParameterStore lookups are required')
