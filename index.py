@@ -3,6 +3,7 @@ import os
 import yaml
 
 from utils.helpers import Helpers
+from utils.config import configuration
 
 
 logging.basicConfig()
@@ -10,17 +11,10 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def _load_config(filename='config.yaml'):
-    """Loads the configuration file."""
-    with open(os.path.abspath(os.path.join(os.path.dirname(__file__), filename)), 'r') as f:
-        config = yaml.load(f)
-        logger.info('Loaded config: {0}'.format(config))
-    return config
-
 
 def handler(event, context):
     """Entry point for the Lambda function."""
-    config = _load_config()
+    config = configuration()
 
     # Used to differentiate local vs Lambda.
     if bool(os.getenv('STUB')):
