@@ -1,10 +1,5 @@
 [
   {
-    "ParameterValue": "local-development",
-    "UsePreviousValue": false,
-    "ParameterKey": "ResourcePrefix"
-  },
-  {
     "ParameterValue": "rate(5 minutes)",
     "UsePreviousValue": false,
     "ParameterKey": "ScheduleExpression"

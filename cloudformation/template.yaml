@@ -7,11 +7,6 @@ Metadata:
   CommitMessage: "Lambdaception  invoke lambda from lambda"
 
 Parameters:
-  ResourcePrefix:
-    Type: String
-    Description: A description to identify resources  (e.g. "my-perf-test")
-    MinLength: 2
-
   ScheduleExpression:
     Type: String
     Default: ""
@@ -35,10 +30,6 @@ Conditions:
 Resources:
   LambdaFunction:
     Type: AWS::Lambda::Function
-    Metadata:
-      Comment:
-        "Fn::Sub":
-          "Function for ${ResourcePrefix}"
     DependsOn: [ LambdaFunctionExecutionRole ]
     Properties:
       Code:
@@ -129,9 +120,6 @@ Resources:
     Type: AWS::Events::Rule
     Condition: HasSchedule
     Properties:
-      Description:
-        "Fn::Sub":
-          "Scheduled rule for ${ResourcePrefix}"
       ScheduleExpression: { Ref : ScheduleExpression }
       State: ENABLED
       Targets:
