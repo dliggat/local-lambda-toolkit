@@ -57,7 +57,7 @@ build: test
 	cp *.py $(STAGING_DIR)
 	cp *.yaml $(STAGING_DIR)
         # Copy all other directories, excluding the blacklist.
-	$(eval $@DEPLOY_DIRS := $(shell find . -type d -depth 1 | grep -v  -E '$(EXCLUDE_DIRS)'   ))
+	$(eval $@DEPLOY_DIRS := $(shell find . -type d -depth 1 | grep -v  -E '$(EXCLUDE_DIRS)'))
 	cp -R $($@DEPLOY_DIRS) $(STAGING_DIR)
 	$(eval $@FILE := deploy-$(shell date +%Y-%m-%d_%H-%M).zip)
 	cd $(STAGING_DIR); zip -r $($@FILE) ./*; mv *.zip ../$(BUILDS_DIR)

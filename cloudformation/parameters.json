@@ -1,8 +1,23 @@
 [
   {
-    "ParameterValue": "rate(5 minutes)",
+    "ParameterValue": "ProjectName",
+    "UsePreviousValue": false,
+    "ParameterKey": "local-lambda-toolkit"
+  },
+  {
+    "ParameterValue": "EnvironmentName",
+    "UsePreviousValue": false,
+    "ParameterKey": "development"
+  },
+  {
+    "ParameterValue": "rate(24 hours)",
     "UsePreviousValue": false,
     "ParameterKey": "ScheduleExpression"
+  },
+  {
+    "ParameterValue": "Runtime",
+    "UsePreviousValue": false,
+    "ParameterKey": "python2.7"
   },
   {
     "ParameterValue": "300",
