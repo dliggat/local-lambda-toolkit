@@ -45,7 +45,9 @@ Creates a CloudFormation stack with the Lambda function, an execution role, and 
 
 Edit `cloudformation/parameters.json`, and supply appropriate parameters.
 
-In particular, Select appropriate values for `ProjectName` and `EnvironmentName` in `cloudformation/parameters.json`. **The resulting CloudFormation stack will be named `${ProjectName}-${EnvironmentName}-stack`, and a stack name of this form will be presumed for future CloudFormation operations.**
+In particular, Select appropriate values for `ProjectName` and `EnvironmentName` in `cloudformation/parameters.json`.
+
+**Important: The resulting CloudFormation stack will be named `${ProjectName}-${EnvironmentName}-stack`, and a stack name of this form will be presumed for future CloudFormation operations.**
 
 ### B) Permissioning
 
