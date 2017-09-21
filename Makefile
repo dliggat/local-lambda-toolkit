@@ -35,7 +35,7 @@ delete-stack:
 	  --stack-name $(STACK_NAME)
 
 describe-stack:
-	aws-cloudformation describe-stacks \
+	aws cloudformation describe-stacks \
 	  --stack-name $(STACK_NAME)
 
 invoke:
