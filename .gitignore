@@ -1,6 +1,5 @@
 builds/
 staging
-.stack-name
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -41,13 +41,19 @@ A set of conventions for local AWS Lambda software development.
 
 Creates a CloudFormation stack with the Lambda function, an execution role, and an optional CloudWatch event to run on a recurring basis.
 
-Edit `cloudformation/template.yaml` and `cloudformation/parameters.yaml` as necessary - ensure that the Lambda function is appropriately permissioned via the policies attached to the `LambdaFunctionExecutionRole`.
+Edit `cloudformation/template.yaml` and `cloudformation/parameters.json` to make any necessary adjustments.
 
-```bash
-STACK=my-stack make create-stack
-```
+### A) Stack Naming and Parameters
 
-### Optional: Set Values in Parameter Store
+Edit `cloudformation/parameters.json`, and supply appropriate parameters.
+
+In particular, Select appropriate values for `ProjectName` and `EnvironmentName` in `cloudformation/parameters.json`. *The resulting CloudFormation stack will be named `${ProjectName}-${EnvironmentName}-stack`, and a stack name of this form will be presumed for future CloudFormation operations.*
+
+### B) Permissioning
+
+Edit `cloudformation/template.yaml` and ensure that the Lambda function is appropriately permissioned via the policies attached to the `LambdaFunctionExecutionRole`.
+
+### C) Optional: Set Values in Parameter Store
 
 If this Lambda function should have access to values in Parameter Store, set these on the CLI (or console); e.g.:
 
@@ -79,10 +85,20 @@ Ensure that the `AllowParameterAccess` policy in `cloudformation/template.yaml` 
             - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}.common.*"
 # ...
 
+
+When these steps are complete:
+
+
+```bash
+make create-stack
+```
+
+### Updates
+
 Then update the stack:
 
 ```bash
-STACK=my-stack make update-stack
+make update-stack
 ```
 
 ## 2. Set Configuration Values

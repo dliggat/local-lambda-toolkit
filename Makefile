@@ -1,37 +1,42 @@
 STAGING_DIR   := package
 BUILDS_DIR    := builds
+PARAMS_FILE   := cloudformation/parameters.json
 EXCLUDE_DIRS  := .git|tests|cloudformation|requirements|$(STAGING_DIR)|$(BUILDS_DIR)
 PIP_COMMAND   := pip install -r
 
-.PHONY: init create-stack update-stack invoke test clean build _check-arn _check-stack deploy
+.PHONY: init create-stack update-stack delete-stack describe-stack invoke test clean build _check-arn deploy
+
+# Read the cloudformation/parameters.json file for the ProjectName and EnvionmentName.
+# Use these to name the CloudFormation stack.
+PROJECT_NAME = $(shell cat $(PARAMS_FILE) | python -c 'import sys, json; j = [i for i in json.load(sys.stdin) if i["ParameterKey"]=="ProjectName"][0]["ParameterValue"]; print j')
+ENVIRONMENT_NAME = $(shell cat $(PARAMS_FILE) | python -c 'import sys, json; j = [i for i in json.load(sys.stdin) if i["ParameterKey"]=="EnvironmentName"][0]["ParameterValue"]; print j')
+STACK_NAME = $(PROJECT_NAME)-$(ENVIRONMENT_NAME)-stack
 
 
 init:
 	$(PIP_COMMAND) requirements/dev.txt
 
-
-_check-stack:  # Ensure that a stack name is set before we do any stack operations.
-ifndef STACK
-	$(error STACK is undefined; set to the CloudFormation stack name)
-endif
-
-create-stack: _check-stack
+create-stack:
 	aws cloudformation create-stack \
-	  --stack-name $(STACK) \
+	  --stack-name $(STACK_NAME) \
 	  --template-body file://cloudformation/template.yaml \
 	  --parameters file://cloudformation/parameters.json \
 	  --capabilities CAPABILITY_IAM
 
-update-stack: _check-stack
+update-stack:
 	aws cloudformation update-stack \
-	  --stack-name $(STACK) \
+	  --stack-name $(STACK_NAME) \
 	  --template-body file://cloudformation/template.yaml \
 	  --parameters file://cloudformation/parameters.json \
 	  --capabilities CAPABILITY_IAM
 
-delete-stack: _check-stack
+delete-stack:
 	aws cloudformation delete-stack \
-	  --stack-name $(STACK) \
+	  --stack-name $(STACK_NAME)
+
+describe-stack:
+	aws-cloudformation describe-stacks \
+	  --stack-name $(STACK_NAME)
 
 invoke:
 	STUB=true python index.py
@@ -60,7 +65,7 @@ build: test
 
 _check-arn:  # Ensure that an ARN is set before we can deploy to it.
 ifndef ARN
-	$(error ARN is undefined; set to the appropriate Lambda ARN to deploy to)
+	$(error ARN is undefined; set to the appropriate Lambda ARN to deploy to. View with `make describe-stack`)
 endif
 
 deploy: build _check-arn
