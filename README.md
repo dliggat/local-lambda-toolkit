@@ -185,5 +185,5 @@ ARN=arn:aws:lambda:us-west-2:111111111111:function:my-function-name make deploy
 Deletes the CloudFormation stack.
 
 ```bash
-STACK=my-stack make delete-stack
+make delete-stack
 ```
