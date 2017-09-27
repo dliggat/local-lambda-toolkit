@@ -1,21 +1,24 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: A 'lambda_function' stack for project 'tam-demo-function'; rendered on 2017-03-16 by fabricate.
-
-Metadata:
-  CommitHash: ff89eaa5595d27ba152a20876ac53cdee061acf5
-  CommitMessage: "Lambdaception  invoke lambda from lambda"
+Description: A Lambda CFN project stack.
 
 Parameters:
-  ResourcePrefix:
+  ProjectName:
     Type: String
-    Description: A description to identify resources  (e.g. "my-perf-test")
-    MinLength: 2
+    Description: Name for this project; e.g. downtime-notifier, dynamodb-scaler
+
+  EnvironmentName:
+    Type: String
+    Description: Name for this environment; e.g. development, staging, production
 
   ScheduleExpression:
     Type: String
     Default: ""
     Description: How often to invoke the function (e.g. 'rate(24 hours)'), or empty string to skip creating a AWS::Events::Rule
+
+  Runtime:
+    Type: String
+    Description: Runtime for the function; e.g. python2.7
 
   Timeout:
     Type: Number
@@ -38,7 +41,7 @@ Resources:
     Metadata:
       Comment:
         "Fn::Sub":
-          "Function for ${ResourcePrefix}"
+          "Function for ${ProjectName}-${EnvironmentName}"
     DependsOn: [ LambdaFunctionExecutionRole ]
     Properties:
       Code:
@@ -59,31 +62,13 @@ Resources:
       Role: { "Fn::GetAtt": [ LambdaFunctionExecutionRole, Arn ] }
       Timeout: { Ref: Timeout }
       Handler: index.handler
-      Runtime: python2.7
+      Runtime: { Ref: Runtime }
       MemorySize: { Ref: MemorySize }
-
-  Policy:
-    Type: AWS::IAM::Policy
-    Properties:
-      Roles:
-        - { Ref: LambdaFunctionExecutionRole }
-      PolicyName: CommonPolicyForLambdaAndDevelopment
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action:
-              - "logs:CreateLogGroup"
-              - "logs:CreateLogStream"
-              - "logs:PutLogEvents"
-            Resource: "arn:aws:logs:*:*:*"
-          - Effect: Allow
-            Action:
-              - "ec2:DescribeSecurityGroups"
-            Resource: "*"
+      Environment:
+        Variables:
+          EnvironmentName: { Ref: EnvironmentName }
 
 
-  # The IAM role that the lambda function will execute under.
   LambdaFunctionExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -107,7 +92,47 @@ Resources:
             Action:
               - sts:AssumeRole
       Path: /
-      # # Optional:
+      Policies:
+        - PolicyName: WriteLogsToCloudWatch
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "arn:aws:logs:*:*:*"
+        - PolicyName: DescribeSGsForAccountId
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "ec2:DescribeSecurityGroups"
+                Resource: "*"
+        # # Unused - uncomment to enable ParameterStore lookups for the given namespaces.
+        # - PolicyName: "ParameterStore"
+        #   PolicyDocument:
+        #     Version: "2012-10-17"
+        #     Id: "AllowParameterAccess"
+        #     Statement:
+        #       - Sid: "AllowUnencryptedParameters"
+        #         Effect: "Allow"
+        #         Action: "ssm:GetParameter"
+        #         Resource:
+        #           - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/common.*"
+        #           - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${EnvironmentName}.*"
+        #           - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}.common.*"
+        #           - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}.${EnvironmentName}.*"
+        #       - Sid: "AllowEncryptedParameters"
+        #         Effect: "Allow"
+        #         Action: "kms:Decrypt"
+        #         Resource:
+        #           - Fn::ImportValue:
+        #             "Fn::Sub": "arn-to-key-to-authorize"
+
+      # # Unused - uncomment to add an array of managed policies.
       # ManagedPolicyArns:
       #   - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
 
@@ -131,7 +156,7 @@ Resources:
     Properties:
       Description:
         "Fn::Sub":
-          "Scheduled rule for ${ResourcePrefix}"
+          "Scheduled rule for ${ProjectName}-${EnvironmentName}"
       ScheduleExpression: { Ref : ScheduleExpression }
       State: ENABLED
       Targets:

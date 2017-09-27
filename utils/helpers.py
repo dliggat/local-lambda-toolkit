@@ -1,7 +1,7 @@
 import boto3
 
 
-class Utility(object):
+class Helpers(object):
     """A container class for convenience functions."""
 
     _aws_account_id = None

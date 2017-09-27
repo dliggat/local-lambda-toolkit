@@ -1,22 +1,32 @@
 [
   {
-    "ParameterValue": "local-development",
-    "UsePreviousValue": false,
-    "ParameterKey": "ResourcePrefix"
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "my-project",
+    "UsePreviousValue": false
   },
   {
-    "ParameterValue": "rate(5 minutes)",
-    "UsePreviousValue": false,
-    "ParameterKey": "ScheduleExpression"
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "development",
+    "UsePreviousValue": false
   },
   {
+    "ParameterKey": "ScheduleExpression",
+    "ParameterValue": "rate(24 hours)",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "Runtime",
+    "ParameterValue": "python2.7",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "Timeout",
     "ParameterValue": "300",
-    "UsePreviousValue": false,
-    "ParameterKey": "Timeout"
+    "UsePreviousValue": false
   },
   {
+    "ParameterKey": "MemorySize",
     "ParameterValue": "256",
-    "UsePreviousValue": false,
-    "ParameterKey": "MemorySize"
+    "UsePreviousValue": false
   }
 ]
