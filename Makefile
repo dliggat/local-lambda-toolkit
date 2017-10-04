@@ -39,7 +39,7 @@ describe-stack:
 	  --stack-name $(STACK_NAME)
 
 invoke:
-	IS_LOCAL=true EnvironmentName=$(ENVIRONMENT_NAME) python index.py
+	IS_LOCAL=true ProjectName=$(PROJECT_NAME) EnvironmentName=$(ENVIRONMENT_NAME) python index.py
 
 test:
 	py.test -rsxX -q -s tests

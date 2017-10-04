@@ -67,6 +67,7 @@ Resources:
       Environment:
         Variables:
           EnvironmentName: { Ref: EnvironmentName }
+          ProjectName: { Ref: ProjectName }
 
 
   LambdaFunctionExecutionRole:
