@@ -113,19 +113,19 @@ Resources:
                   - "ec2:DescribeSecurityGroups"
                 Resource: "*"
         # # Unused - uncomment to enable ParameterStore lookups for the given namespaces.
-        # - PolicyName: "ParameterStore"
-        #   PolicyDocument:
-        #     Version: "2012-10-17"
-        #     Id: "AllowParameterAccess"
-        #     Statement:
-        #       - Sid: "AllowUnencryptedParameters"
-        #         Effect: "Allow"
-        #         Action: "ssm:GetParameter"
-        #         Resource:
-        #           - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/common.*"
-        #           - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${EnvironmentName}.*"
-        #           - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}.common.*"
-        #           - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}.${EnvironmentName}.*"
+        - PolicyName: "ParameterStore"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Id: "AllowParameterAccess"
+            Statement:
+              - Sid: "AllowUnencryptedParameters"
+                Effect: "Allow"
+                Action: "ssm:GetParameter"
+                Resource:
+                  - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/common.*"
+                  - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${EnvironmentName}/*"
+                  - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}/common/*"
+                  - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}/${EnvironmentName}/*"
         #       - Sid: "AllowEncryptedParameters"
         #         Effect: "Allow"
         #         Action: "kms:Decrypt"

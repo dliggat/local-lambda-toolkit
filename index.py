@@ -1,6 +1,7 @@
 import logging
 import os
 import yaml
+import pprint
 
 from utils.helpers import Helpers
 from utils.config import configuration
@@ -30,6 +31,8 @@ def handler(event, context):
     """Entry point for the Lambda function."""
     logger = setup_logging(context.aws_request_id)
     config = configuration()
+
+    pprint.pprint(config)
 
     # Used to differentiate local vs Lambda.
     if bool(os.getenv('IS_LOCAL')):
