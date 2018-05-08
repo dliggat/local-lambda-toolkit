@@ -58,11 +58,11 @@ Edit `cloudformation/template.yaml` and ensure that the Lambda function is appro
 If this Lambda function should have access to values in Parameter Store, set these on the CLI (or console); e.g.:
 
 ```bash
- aws ssm put-parameter --name "common.preferred-salutation" \
+ aws ssm put-parameter --name "/shared/preferred-salutation" \
  --value "Hello" \
  --type String
 
- aws ssm put-parameter --name "my-project.development.dynamo_table" \
+ aws ssm put-parameter --name "/my-project/development/dynamo_table" \
  --value "stack-ResultTable-16KAA4B56PNEP" \
  --type String
 ```
@@ -82,7 +82,7 @@ Ensure that the `AllowParameterAccess` policy in `cloudformation/template.yaml` 
           Action: "ssm:GetParameter"
           Resource:
             - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/my-namespace.*"
-            - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}.common.*"
+            - "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}/shared/*"
 # ...
 ```
 
