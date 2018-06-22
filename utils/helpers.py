@@ -8,8 +8,8 @@ class Helpers(object):
 
     @classmethod
     def aws_account_id(cls):
-        """Query for the current account ID by inspecting the default security group."""
+        """Query for the current account ID by inspecting the caller identity."""
         if cls._aws_account_id is None:
-            cls._aws_account_id = int(boto3.client('ec2').describe_security_groups(
-                GroupNames=['default'])['SecurityGroups'][0]['OwnerId'])
+            caller_data = boto3.client('sts').get_caller_identity()
+            cls._aws_account_id = caller_data['Arn'].split(':')[4]
         return cls._aws_account_id
