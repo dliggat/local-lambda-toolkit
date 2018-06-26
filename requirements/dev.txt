@@ -3,3 +3,4 @@ pytest==2.9.1
 mock==2.0.0
 awscli
 boto3
+jq

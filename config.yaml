@@ -22,4 +22,3 @@ env:
 # parameterstore_name: /$ProjectName/$EnvironmentName/name
 # parameterstore_bar: other.key.goes.here
 # parameterstore_baz: this.one.has.an.$EnvironmentName
-
