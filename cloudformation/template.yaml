@@ -19,6 +19,9 @@ Parameters:
   Runtime:
     Type: String
     Description: Runtime for the function; e.g. python2.7
+    AllowedValues:
+        - python2.7
+        - python3.6
 
   Timeout:
     Type: Number
@@ -27,6 +30,17 @@ Parameters:
   MemorySize:
     Type: Number
     Description: Memory for the function in MB
+    MinValue: 128
+    MaxValue: 1536
+
+  S3DeploymentBucketName:
+    Type: String
+    Description: S3 Bucket name to deploy code through.
+    Default: ''
+
+  S3DeploymentFileKey:
+    Type: String
+    Description: S3 key to use when deploying the zip file for this Lambda function.
 
 Conditions:
   HasSchedule:
@@ -45,20 +59,8 @@ Resources:
     DependsOn: [ LambdaFunctionExecutionRole ]
     Properties:
       Code:
-        ZipFile:
-          "Fn::Sub": |
-            import json
-            import logging
-
-            logging.basicConfig()
-            logger = logging.getLogger(__name__)
-            logger.setLevel(logging.INFO)
-
-            def handler(event, context):
-                logger.info('Event: ' + json.dumps(event))
-                logger.info('Context: ' + str(dir(context)))
-                return {'message': 'This is placeholder code! Replace me!'}
-
+        S3Bucket: !Ref S3DeploymentBucketName
+        S3Key: !Ref S3DeploymentFileKey
       Role: { "Fn::GetAtt": [ LambdaFunctionExecutionRole, Arn ] }
       Timeout: { Ref: Timeout }
       Handler: index.handler
@@ -68,7 +70,6 @@ Resources:
         Variables:
           EnvironmentName: { Ref: EnvironmentName }
           ProjectName: { Ref: ProjectName }
-
 
   LambdaFunctionExecutionRole:
     Type: AWS::IAM::Role

@@ -4,37 +4,51 @@ PARAMS_FILE   := cloudformation/parameters.json
 EXCLUDE_DIRS  := .git|tests|cloudformation|requirements|$(STAGING_DIR)|$(BUILDS_DIR)
 PIP_COMMAND   := pip install -r
 
-.PHONY: init create-stack update-stack delete-stack describe-stack invoke test clean build _check-arn deploy
+.PHONY: init create-stack update-stack delete-stack describe-stack invoke test clean build update _check_config _check_stack_exists _is_user_authenticated
 
 # Read the cloudformation/parameters.json file for the ProjectName and EnvionmentName.
 # Use these to name the CloudFormation stack.
-PROJECT_NAME = $(shell cat $(PARAMS_FILE) | python -c 'import sys, json; j = [i for i in json.load(sys.stdin) if i["ParameterKey"]=="ProjectName"][0]["ParameterValue"]; print(j)')
-ENVIRONMENT_NAME = $(shell cat $(PARAMS_FILE) | python -c 'import sys, json; j = [i for i in json.load(sys.stdin) if i["ParameterKey"]=="EnvironmentName"][0]["ParameterValue"]; print(j)')
-STACK_NAME = $(PROJECT_NAME)-$(ENVIRONMENT_NAME)-stack
+PROJECT_NAME := $(shell cat $(PARAMS_FILE) | jq -r '.[] | select(.ParameterKey == "ProjectName") | .ParameterValue')
+ENVIRONMENT_NAME := $(shell cat $(PARAMS_FILE) | jq -r '.[] | select(.ParameterKey == "EnvironmentName") | .ParameterValue')
+S3_KEY_NAME := $(shell cat $(PARAMS_FILE) | jq -r '.[] | select(.ParameterKey == "S3DeploymentFileKey") | .ParameterValue')
+S3_BUCKET_NAME :=$(shell cat $(PARAMS_FILE) | jq -r '.[] | select(.ParameterKey == "S3DeploymentBucketName") | .ParameterValue')
+STACK_NAME := $(PROJECT_NAME)-$(ENVIRONMENT_NAME)
 
+_is_user_authenticated:
+	@aws sts get-caller-identity > /dev/null
+
+_check_stack_exists:
+	@aws cloudformation describe-stacks --stack-name $(STACK_NAME) > /dev/null
+
+_check_config:
+ifeq ($(S3_BUCKET_NAME),)
+	$(error Please set your S3 bucket name in "cloudformation/parameters.json" and re-run.)
+endif
 
 init:
 	$(PIP_COMMAND) requirements/dev.txt
 
-create-stack:
+create-stack: _check_config _is_user_authenticated build
+	$(eval $@FILE := $(shell ls -t $(BUILDS_DIR) | head -n1 ))
+	aws s3 cp "$(BUILDS_DIR)/$($@FILE)" "s3://$(S3_BUCKET_NAME)/$(S3_KEY_NAME)"
 	aws cloudformation create-stack \
 	  --stack-name $(STACK_NAME) \
 	  --template-body file://cloudformation/template.yaml \
 	  --parameters file://cloudformation/parameters.json \
 	  --capabilities CAPABILITY_IAM
 
-update-stack:
+update-stack: _is_user_authenticated
 	aws cloudformation update-stack \
 	  --stack-name $(STACK_NAME) \
 	  --template-body file://cloudformation/template.yaml \
 	  --parameters file://cloudformation/parameters.json \
 	  --capabilities CAPABILITY_IAM
 
-delete-stack:
+delete-stack: _is_user_authenticated
 	aws cloudformation delete-stack \
 	  --stack-name $(STACK_NAME)
 
-describe-stack:
+describe-stack: _is_user_authenticated
 	aws cloudformation describe-stacks \
 	  --stack-name $(STACK_NAME)
 
@@ -63,12 +77,9 @@ build: test
 	@echo "Built $(BUILDS_DIR)/$($@FILE)"
 	rm -rf $(STAGING_DIR)
 
-_check-arn:  # Ensure that an ARN is set before we can deploy to it.
-ifndef ARN
-	$(error ARN is undefined; set to the appropriate Lambda ARN to deploy to. View with `make describe-stack`)
-endif
-
-deploy: build _check-arn
+update: _is_user_authenticated _check_stack_exists build
 	$(eval $@FILE := $(shell ls -t $(BUILDS_DIR) | head -n1 ))
-	aws lambda update-function-code --function-name $(ARN) --zip-file "fileb://$(BUILDS_DIR)/$($@FILE)"
-	@echo "Deployed $(BUILDS_DIR)/$($@FILE) to $(ARN)"
+	$(eval $@ARN := $(shell aws cloudformation describe-stacks --stack-name $(STACK_NAME) --query 'Stacks[].Outputs[?OutputKey==`LambdaFunctionARN`].OutputValue | [0] | [0]' --output text))
+	aws s3 cp "$(BUILDS_DIR)/$($@FILE)" "s3://$(S3_BUCKET_NAME)/$(S3_KEY_NAME)"
+	aws lambda update-function-code --function-name "$($@ARN)" --s3-bucket "$(S3_BUCKET_NAME)" --s3-key "$(S3_KEY_NAME)"
+	@echo "Lambda source code updated successfully."

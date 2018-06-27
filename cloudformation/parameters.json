@@ -10,6 +10,16 @@
     "UsePreviousValue": false
   },
   {
+    "ParameterKey": "S3DeploymentBucketName",
+    "ParameterValue": "andlytle-deployments",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "S3DeploymentFileKey",
+    "ParameterValue": "/lambda/my-project.zip",
+    "UsePreviousValue": false
+  },
+  {
     "ParameterKey": "ScheduleExpression",
     "ParameterValue": "rate(24 hours)",
     "UsePreviousValue": false
