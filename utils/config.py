@@ -20,12 +20,15 @@ def configuration(filename='config.yaml'):
 
     new_config = {}
     logger.info('Inspecting configuration to see if any ParameterStore lookups are required')
-    for (k,v) in config.iteritems():
+    for (k,v) in config.items():
         key = k
-        value = os.path.expandvars(v)
-        if k.startswith('parameterstore_'):
-            key = k.split('parameterstore_')[-1]
-            value = client.get_parameter(Name=value, WithDecryption=True)['Parameter']['Value']
+        if isinstance(v, str):
+            value = os.path.expandvars(v)
+            if k.startswith('parameterstore_'):
+                key = k.split('parameterstore_')[-1]
+                value = client.get_parameter(Name=value, WithDecryption=True)['Parameter']['Value']
+        else:
+            value = v
         new_config[key] = value
 
     return new_config
