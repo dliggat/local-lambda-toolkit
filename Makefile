@@ -68,7 +68,7 @@ build: test
 	$(PIP_COMMAND) requirements/lambda.txt -t $(STAGING_DIR)
 	cp *.py $(STAGING_DIR)
 	cp *.yaml $(STAGING_DIR)
-        # Copy all other directories, excluding the blacklist.
+	# Copy all other directories, excluding the blacklist.
 	$(eval $@DEPLOY_DIRS := $(shell find . -type d -maxdepth 1 -mindepth 1 | grep -v  -E '$(EXCLUDE_DIRS)'))
 	cp -R $($@DEPLOY_DIRS) $(STAGING_DIR)
 	find $(STAGING_DIR) -type f -ipath '*.pyc' -delete  # Get rid of unnecessary .pyc files.
