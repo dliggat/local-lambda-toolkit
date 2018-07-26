@@ -1,22 +1,22 @@
 [
   {
     "ParameterKey": "ProjectName",
-    "ParameterValue": "my-project",
+    "ParameterValue": "",
     "UsePreviousValue": false
   },
   {
     "ParameterKey": "EnvironmentName",
-    "ParameterValue": "development",
+    "ParameterValue": "",
     "UsePreviousValue": false
   },
   {
     "ParameterKey": "S3DeploymentBucketName",
-    "ParameterValue": "andlytle-deployments",
+    "ParameterValue": "",
     "UsePreviousValue": false
   },
   {
     "ParameterKey": "S3DeploymentFileKey",
-    "ParameterValue": "/lambda/my-project.zip",
+    "ParameterValue": "",
     "UsePreviousValue": false
   },
   {
@@ -26,7 +26,7 @@
   },
   {
     "ParameterKey": "Runtime",
-    "ParameterValue": "python2.7",
+    "ParameterValue": "python3.6",
     "UsePreviousValue": false
   },
   {
