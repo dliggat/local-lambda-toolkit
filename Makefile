@@ -27,6 +27,7 @@ endif
 
 init:
 	$(PIP_COMMAND) requirements/dev.txt
+	PYTHONPATH=./utils/ python -m configure
 
 create-stack: _check_config _is_user_authenticated build
 	$(eval $@FILE := $(shell ls -t $(BUILDS_DIR) | head -n1 ))

@@ -4,3 +4,4 @@ mock==2.0.0
 awscli
 boto3
 jq
+prompt_toolkit
