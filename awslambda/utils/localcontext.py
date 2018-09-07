@@ -1,6 +1,6 @@
 import uuid
 
-from utils.helpers import Helpers
+from awslambda.utils.helpers import Helpers
 
 class LocalContext(object):
     """A class to simulate the Lambda context locally."""

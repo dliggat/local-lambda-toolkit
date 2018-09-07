@@ -1,7 +1,10 @@
 import mock
 import unittest
 
-from utils.helpers import Helpers
+import sys
+sys.path.append("..")
+
+from awslambda.utils.helpers import Helpers
 
 
 class TestHelpers(unittest.TestCase):

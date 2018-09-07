@@ -54,7 +54,7 @@ describe-stack: _is_user_authenticated
 	  --stack-name $(STACK_NAME)
 
 invoke:
-	IS_LOCAL=true ProjectName=$(PROJECT_NAME) EnvironmentName=$(ENVIRONMENT_NAME) python index.py
+	IS_LOCAL=true ProjectName=$(PROJECT_NAME) EnvironmentName=$(ENVIRONMENT_NAME) python lambda/index.py
 
 test:
 	py.test -rsxX -q -s tests

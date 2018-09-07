@@ -1,7 +1,10 @@
 import mock
 import unittest
 
-from utils.localcontext import LocalContext
+import sys
+sys.path.append("..")
+
+from awslambda.utils.localcontext import LocalContext
 
 
 class TestLocalContext(unittest.TestCase):
