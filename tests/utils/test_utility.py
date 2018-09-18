@@ -1,7 +1,10 @@
 import mock
 import unittest
 
-from utils.helpers import Helpers
+import sys
+sys.path.append("..")
+
+from awslambda.utils.helpers import Helpers
 
 
 class TestHelpers(unittest.TestCase):
@@ -10,11 +13,11 @@ class TestHelpers(unittest.TestCase):
     def testAwsAccountId(self, patched_boto):
         """Tests the output of Helpers.aws_account_id."""
         patched_boto.return_value.get_caller_identity.return_value = {
-            'Arn': 'arn:aws:iam::123456654321:user/dliggat' }
+            'Arn': 'arn:aws:iam::localcontext:user/dliggat' }
 
         # Query for the account id; first to generate, second for a cache hit.
-        self.assertEqual(Helpers.aws_account_id(), '123456654321')
-        self.assertEqual(Helpers.aws_account_id(), '123456654321')
+        self.assertEqual(Helpers.aws_account_id(), 'localcontext')
+        self.assertEqual(Helpers.aws_account_id(), 'localcontext')
 
         # We should only ever the boto code once; the account value should
         # be memoized in the class after the initial invocation.

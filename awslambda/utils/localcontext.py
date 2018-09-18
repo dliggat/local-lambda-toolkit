@@ -1,6 +1,6 @@
 import uuid
 
-from utils.helpers import Helpers
+from awslambda.utils.helpers import Helpers
 
 class LocalContext(object):
     """A class to simulate the Lambda context locally."""
@@ -8,8 +8,7 @@ class LocalContext(object):
     @property
     def invoked_function_arn(self):
         """Simulate the Lambda ARN that comes into the context object. """
-        return 'arn:aws:lambda:us-east-1:{0}:function:func-name'.format(
-            Helpers.aws_account_id())
+        return 'arn:aws:lambda:us-east-1:{0}:function:func-name'.format('localcontext')
 
     @property
     def aws_request_id(self):

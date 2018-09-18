@@ -6,15 +6,15 @@ from botocore.stub import Stubber
 
 import sys
 sys.path.append("..")
-import index
+import awslambda
 
 
 class TestHandler(unittest.TestCase):
-    @mock.patch('index.Helpers.aws_account_id')
-    def test_handler(self, aws_account_id):
+    def test_handler(self):
         """
         Test the handler operates as expected.
         """
+        pass
         # test_event = MagicMock()
         # test_context = MagicMock()
 

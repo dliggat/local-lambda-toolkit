@@ -3,8 +3,8 @@ import os
 import yaml
 import pprint
 
-from utils.helpers import Helpers
-from utils.config import configuration
+from awslambda.utils.helpers import Helpers
+from awslambda.utils.config import configuration
 
 
 def handler(event, context):

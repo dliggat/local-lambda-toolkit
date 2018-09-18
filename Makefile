@@ -27,7 +27,7 @@ endif
 
 init:
 	$(PIP_COMMAND) requirements/dev.txt
-	PYTHONPATH=./utils/ python -m configure
+	PYTHONPATH=./awslambda/utils/ python -m configure
 
 create-stack: _check_config _is_user_authenticated build
 	$(eval $@FILE := $(shell ls -t $(BUILDS_DIR) | head -n1 ))
@@ -54,7 +54,7 @@ describe-stack: _is_user_authenticated
 	  --stack-name $(STACK_NAME)
 
 invoke:
-	IS_LOCAL=true ProjectName=$(PROJECT_NAME) EnvironmentName=$(ENVIRONMENT_NAME) python index.py
+	IS_LOCAL=true ProjectName=$(PROJECT_NAME) EnvironmentName=$(ENVIRONMENT_NAME) python lambda/index.py
 
 test:
 	py.test -rsxX -q -s tests
@@ -67,8 +67,8 @@ build: test
 	mkdir -p $(STAGING_DIR)
 	mkdir -p $(BUILDS_DIR)
 	$(PIP_COMMAND) requirements/lambda.txt -t $(STAGING_DIR)
-	cp *.py $(STAGING_DIR)
-	cp *.yaml $(STAGING_DIR)
+	cp awslambda/*.py $(STAGING_DIR)
+	cp awslambda/*.yaml $(STAGING_DIR)
 	# Copy all other directories, excluding the blacklist.
 	$(eval $@DEPLOY_DIRS := $(shell find . -type d -maxdepth 1 -mindepth 1 | grep -v  -E '$(EXCLUDE_DIRS)'))
 	cp -R $($@DEPLOY_DIRS) $(STAGING_DIR)
