@@ -73,6 +73,8 @@ build: test
 	$(eval $@DEPLOY_DIRS := $(shell find . -type d -maxdepth 1 -mindepth 1 | grep -v  -E '$(EXCLUDE_DIRS)'))
 	cp -R $($@DEPLOY_DIRS) $(STAGING_DIR)
 	find $(STAGING_DIR) -type f -ipath '*.pyc' -delete  # Get rid of unnecessary .pyc files.
+	find $(STAGING_DIR) -type f | xargs chmod a+rx
+	find $(STAGING_DIR) -type d | xargs chmod a+rx
 	$(eval $@FILE := deploy-$(shell date +%Y-%m-%d_%H-%M).zip)
 	cd $(STAGING_DIR); zip -r $($@FILE) ./*; mv *.zip ../$(BUILDS_DIR)
 	@echo "Built $(BUILDS_DIR)/$($@FILE)"
